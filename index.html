@@ -1,82 +1,65 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Formulario de Prueba</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/css/bootstrap.min.css">
-    <style>
-        .container {
-            margin-top: 50px;
-        }
-    </style>
-    <script>
-        function enviarFormulario() {
-            var form = document.getElementById("formulario");
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", "https://us-central1-metax-lending-00a-qa.cloudfunctions.net/sistema-frances", true);
-            xhr.setRequestHeader("Content-Type", "application/json");
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    var resultado = JSON.parse(xhr.responseText);
-                    mostrarResultado(resultado);
-                }
-            };
-            var requestBody = {
-                "n_pagos": parseInt(form.n_pagos.value),
-                "monto_desembolsado": parseFloat(form.monto_desembolsado.value),
-                "tasa_interes": parseFloat(form.tasa_interes.value),
-                "fee_originacion": parseFloat(form.fee_originacion.value),
-                "periodicidad": parseInt(form.periodicidad.value),
-                "fee_cuota": parseFloat(form.fee_cuota.value)
-            };
-            xhr.send(JSON.stringify(requestBody));
-        }
-
-        function mostrarResultado(resultado) {
-            var resultadoDiv = document.getElementById("resultado");
-            resultadoDiv.innerHTML = "<h4>Resultado:</h4><ul class='list-group'>" +
-                "<li class='list-group-item'><strong>Base Installment:</strong> " + resultado.base_installment + "</li>" +
-                "<li class='list-group-item'><strong>Last Installment:</strong> " + resultado.last_installment + "</li>" +
-                "<li class='list-group-item'><strong>Base Borrowed Amount:</strong> " + resultado.base_borrowed_amount + "</li>" +
-                "<li class='list-group-item'><strong>Fee Borrowed Amount:</strong> " + resultado.fee_borrowed_amount + "</li>" +
-                "<li class='list-group-item'><strong>Installment Fee Amount:</strong> " + resultado.installment_fee_amount + "</li>" +
-                "</ul>";
-        }
-    </script>
+  <title>Formulario de Solicitud</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <div class="container">
-        <h1>Formulario de Prueba</h1>
-        <form id="formulario">
-            <div class="mb-3">
-                <label for="n_pagos" class="form-label">Número de Pagos:</label>
-                <input type="number" class="form-control" id="n_pagos" value="3">
-            </div>
-            <div class="mb-3">
-                <label for="monto_desembolsado" class="form-label">Monto Desembolsado:</label>
-                <input type="number" class="form-control" id="monto_desembolsado" value="5000">
-            </div>
-            <div class="mb-3">
-                <label for="tasa_interes" class="form-label">Tasa de Interés:</label>
-                <input type="number" step="0.01" class="form-control" id="tasa_interes" value="0.81">
-            </div>
-            <div class="mb-3">
-                <label for="fee_originacion" class="form-label">Fee de Originación:</label>
-                <input type="number" step="0.01" class="form-control" id="fee_originacion" value="0.1">
-            </div>
-            <div class="mb-3">
-                <label for="periodicidad" class="form-label">Periodicidad:</label>
-                <input type="number" class="form-control" id="periodicidad" value="12">
-            </div>
-            <div class="mb-3">
-                <label for="fee_cuota" class="form-label">Fee de Cuota:</label>
-                <input type="number" step="0.01" class="form-control" id="fee_cuota" value="0">
-            </div>
-            <button type="button" class="btn btn-primary" onclick="enviarFormulario()">Enviar</button>
-        </form>
+  <h1>Formulario de Solicitud</h1>
+  <form id="solicitud-form">
+    <label for="n_pagos">Número de Pagos:</label>
+    <input type="number" id="n_pagos" name="n_pagos" value="3" required><br>
 
-        <div id="resultado"></div>
-    </div>
+    <label for="monto_desembolsado">Monto Desembolsado:</label>
+    <input type="number" id="monto_desembolsado" name="monto_desembolsado" value="5000" required><br>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/js/bootstrap.bundle.min.js"></script>
+    <label for="tasa_interes">Tasa de Interés:</label>
+    <input type="number" id="tasa_interes" name="tasa_interes" step="0.01" value="0.81" required><br>
+
+    <label for="fee_originacion">Fee de Originación:</label>
+    <input type="number" id="fee_originacion" name="fee_originacion" step="0.01" value="0.1" required><br>
+
+    <label for="periodicidad">Periodicidad:</label>
+    <input type="number" id="periodicidad" name="periodicidad" value="12" required><br>
+
+    <label for="fee_cuota">Fee de Cuota:</label>
+    <input type="number" id="fee_cuota" name="fee_cuota" step="0.01" value="0" required><br>
+
+    <button type="submit">Enviar solicitud</button>
+  </form>
+
+  <div id="resultado"></div>
+
+  <script>
+    $(document).ready(function() {
+      $('#solicitud-form').submit(function(event) {
+        event.preventDefault();
+
+        var formData = {
+          n_pagos: $('#n_pagos').val(),
+          monto_desembolsado: $('#monto_desembolsado').val(),
+          tasa_interes: $('#tasa_interes').val(),
+          fee_originacion: $('#fee_originacion').val(),
+          periodicidad: $('#periodicidad').val(),
+          fee_cuota: $('#fee_cuota').val()
+        };
+
+        $.ajax({
+          url: 'https://us-central1-metax-lending-00a-qa.cloudfunctions.net/sistema-frances',
+          type: 'POST',
+          data: JSON.stringify(formData),
+          contentType: 'application/json',
+          dataType: 'json',
+          mode: 'cors', // Solución para CORS
+          success: function(response) {
+            $('#resultado').text(JSON.stringify(response));
+          },
+          error: function(xhr, status, error) {
+            console.log(xhr.responseText);
+          }
+        });
+      });
+    });
+  </script>
 </body>
 </html>
