@@ -12,7 +12,7 @@
         function enviarFormulario() {
             var form = document.getElementById("formulario");
             var xhr = new XMLHttpRequest();
-            xhr.open("POST", "https://us-central1-asd-ddd-00a-qa.cloudfunctions.net/sistema-frances", true);
+            xhr.open("POST", "https://us-central1-metax-lending-00a-qa.cloudfunctions.net/sistema-frances", true);
             xhr.setRequestHeader("Content-Type", "application/json");
             xhr.onreadystatechange = function() {
                 if (xhr.readyState === 4 && xhr.status === 200) {
