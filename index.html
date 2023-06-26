@@ -2,29 +2,48 @@
 <html>
 <head>
     <title>Formulario de Prueba</title>
+    <script>
+        function enviarFormulario() {
+            var form = document.getElementById("formulario");
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "https://us-central1-asd-ddd-00a-qa.cloudfunctions.net/sistema-frances", true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var resultado = JSON.parse(xhr.responseText);
+                    mostrarResultado(resultado);
+                }
+            };
+            var requestBody = {
+                "n_pagos": parseInt(form.n_pagos.value),
+                "monto_desembolsado": parseFloat(form.monto_desembolsado.value),
+                "tasa_interes": parseFloat(form.tasa_interes.value),
+                "fee_originacion": parseFloat(form.fee_originacion.value),
+                "periodicidad": parseInt(form.periodicidad.value),
+                "fee_cuota": parseFloat(form.fee_cuota.value)
+            };
+            xhr.send(JSON.stringify(requestBody));
+        }
+
+        function mostrarResultado(resultado) {
+            var resultadoDiv = document.getElementById("resultado");
+            resultadoDiv.innerHTML = "Base Installment: " + resultado.base_installment +
+                "<br>Last Installment: " + resultado.last_installment +
+                "<br>Base Borrowed Amount: " + resultado.base_borrowed_amount +
+                "<br>Fee Borrowed Amount: " + resultado.fee_borrowed_amount +
+                "<br>Installment Fee Amount: " + resultado.installment_fee_amount;
+        }
+    </script>
 </head>
 <body>
     <h1>Formulario de Prueba</h1>
-    <form action="https://us-central1-asd-ddd-00a-qa.cloudfunctions.net/sistema-frances" method="POST">
-        <label for="n_pagos">Número de Pagos:</label>
-        <input type="number" name="n_pagos" id="n_pagos" value="3"><br><br>
+    <form id="formulario">
+        <!-- Campos del formulario -->
+        <!-- ... -->
 
-        <label for="monto_desembolsado">Monto Desembolsado:</label>
-        <input type="number" name="monto_desembolsado" id="monto_desembolsado" value="5000"><br><br>
-
-        <label for="tasa_interes">Tasa de Interés:</label>
-        <input type="number" name="tasa_interes" id="tasa_interes" step="0.01" value="0.81"><br><br>
-
-        <label for="fee_originacion">Fee de Originación:</label>
-        <input type="number" name="fee_originacion" id="fee_originacion" step="0.01" value="0.1"><br><br>
-
-        <label for="periodicidad">Periodicidad:</label>
-        <input type="number" name="periodicidad" id="periodicidad" value="12"><br><br>
-
-        <label for="fee_cuota">Fee de Cuota:</label>
-        <input type="number" name="fee_cuota" id="fee_cuota" step="0.01" value="0"><br><br>
-
-        <input type="submit" value="Enviar">
+        <input type="button" value="Enviar" onclick="enviarFormulario()">
     </form>
+
+    <div id="resultado"></div>
 </body>
 </html>
